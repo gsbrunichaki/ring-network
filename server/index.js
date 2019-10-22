@@ -2,6 +2,9 @@ const dgram = require('dgram');
 
 const server = dgram.createSocket('udp4');
 
+const HOST = '127.0.0.1';
+const PORT = '5000';
+
 server.on('error', (err) => {
   console.log(`server error:\n${err.stack}`);
   server.close();
@@ -16,4 +19,4 @@ server.on('listening', () => {
   console.log(`server listening ${address.address}:${address.port}`);
 });
 
-server.bind(12345);
+server.bind(PORT, HOST);
