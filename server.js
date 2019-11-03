@@ -49,6 +49,7 @@ server.on("error", err => {
 //receive package
 server.on("message", async (msg, rinfo) => {
   console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
+  console.log(configFile);
   const typePackage = msg.toString().split(";");
   if (typePackage[0] == "2345") {
     const dataPackage = typePackage[1].split(":");
@@ -59,10 +60,13 @@ server.on("message", async (msg, rinfo) => {
       CRC: dataPackage[3],
       mensagem: dataPackage[4]
     };
-
+    console.log(message);
     if (message.apelido_de_destino != configFile.apelido_maquina_atual) {
       sendMessage(msg, configFile.ip_destino_porta);
+    } else if (message.apelido_de_destino == configFile.apelido_maquina_atual) {
+    } else if (message.apelido_de_origem == configFile.apelido_maquina_atual) {
     }
+  } else if (typePackage[0] == "1234") {
   }
 });
 
