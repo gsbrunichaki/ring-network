@@ -19,7 +19,7 @@ module.exports = function readConfigFile(filePath) {
   return dataArq;
 };
 
-module.exports = function sendMessage(message, HOST, PORT) {
+function sendMessage(message, HOST, PORT) {
   console.log(message);
   const client = dgram.createSocket("udp4");
   client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
@@ -27,7 +27,7 @@ module.exports = function sendMessage(message, HOST, PORT) {
     console.log("UDP " + message + " sent to " + HOST + ":" + PORT);
     client.close();
   });
-};
+}
 
 function generateToken() {
   return "1234";
