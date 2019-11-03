@@ -74,6 +74,7 @@ server.on("message", async (msg, rinfo) => {
       }
     }
   } else if (typePackage[0] == "1234") {
+    //queue
   }
 });
 

@@ -1,18 +1,21 @@
 const dgram = require("dgram");
 const readline = require("readline");
+const queueMessage = [
+  {
+    message,
+    host
+  }
+];
 
 const r1 = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-function sendMessage(message, HOST, PORT) {
-  console.log(message);
-  const client = dgram.createSocket("udp4");
-  client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
-    if (err) throw err;
-    console.log("UDP " + message + " sent to " + HOST + ":" + PORT);
-    client.close();
+function sendMessage(message, HOST) {
+  queueMessage.push({
+    message,
+    host: HOST
   });
 }
 
@@ -29,7 +32,7 @@ function help() {
     "\nComandos:\n" +
     "A -- Ajuda\n" +
     "D -- Destrói um token\n" +
-    "E [message] [host] [port] -- Envia [mensagem] para [destino]\n" +
+    "E [message] [host] -- Envia [mensagem] para [destino]\n" +
     "G -- Gera um token\n" +
     "L -- Verifica mensagens na fila para envio\n" +
     "S -- Sair\n"
@@ -44,9 +47,9 @@ function menu() {
     } else if (answer == "D") {
       console.log("dahdau");
       menu();
-    } else if (answer.split(" ").length == 4) {
+    } else if (answer.split(" ").length == 3) {
       const array = answer.split(" ");
-      sendMessage(array[1], array[2], array[3]);
+      sendMessage(array[1], array[2]);
       menu();
     } else if (answer == "G") {
       generateToken();
