@@ -1,20 +1,23 @@
-const dgram = require('dgram');
+const dgram = require("dgram");
+const server = dgram.createSocket("udp4");
 
-const server = dgram.createSocket('udp4');
+const HOST = "127.0.0.1";
+const PORT = "5000";
 
-const HOST = '127.0.0.1';
-const PORT = '5000';
-
-server.on('error', (err) => {
+server.on("error", err => {
   console.log(`server error:\n${err.stack}`);
   server.close();
 });
 
-server.on('message', (msg, rinfo) => {
+//send package
+console.log(rinfo);
+server.on("message", (msg, rinfo) => {
   console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
 });
 
-server.on('listening', () => {
+//receive package
+server.on("listening", () => {
+  ///logic aqui dentro
   const address = server.address();
   console.log(`server listening ${address.address}:${address.port}`);
 });
