@@ -8,16 +8,13 @@ const queueMessage = [];
 const PORT = "41234";
 
 function readConfigFile(filePath) {
-  var dataArq;
   fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
     if (!err) {
-      dataArq = data;
+      return data;
     } else {
       console.log(err);
     }
   });
-
-  return dataArq;
 }
 
 server.on("error", err => {
