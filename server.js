@@ -3,7 +3,7 @@ const fs = require("fs"),
   path = require("path"),
   filePathConfig = path.join(__dirname, "config_1.txt");
 const server = dgram.createSocket("udp4");
-
+const app = require("./app");
 const queueMessage = [];
 const PORT = "41234";
 
@@ -20,7 +20,7 @@ server.on("message", (msg, rinfo) => {
     const dataPackage = typePackage[1].split(":");
     if (dataPackage[2] != "Bob") {
       console.log("aqui");
-      const dataFile = require("./app").readConfigFile(filePathConfig);
+      const dataFile = app.readConfigFile(filePathConfig);
       console.log(dataFile);
     }
   }
