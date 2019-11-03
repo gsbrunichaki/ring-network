@@ -7,6 +7,19 @@ const app = require("./app");
 const queueMessage = [];
 const PORT = "41234";
 
+function readConfigFile(filePath) {
+  var dataArq;
+  fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
+    if (!err) {
+      dataArq = data;
+    } else {
+      console.log(err);
+    }
+  });
+
+  return dataArq;
+}
+
 server.on("error", err => {
   console.log(`server error:\n${err.stack}`);
   server.close();
@@ -20,7 +33,7 @@ server.on("message", (msg, rinfo) => {
     const dataPackage = typePackage[1].split(":");
     if (dataPackage[2] != "Bob") {
       console.log("aqui");
-      const dataFile = app.readConfigFile(filePathConfig);
+      const dataFile = readConfigFile(filePathConfig);
       console.log(dataFile);
     }
   }

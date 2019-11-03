@@ -6,21 +6,6 @@ const r1 = readline.createInterface({
   output: process.stdout
 });
 
-module.exports = function() {
-  this.readConfigFile = function(filePath) {
-    var dataArq;
-    fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
-      if (!err) {
-        dataArq = data;
-      } else {
-        console.log(err);
-      }
-    });
-
-    return dataArq;
-  };
-};
-
 function sendMessage(message, HOST, PORT) {
   console.log(message);
   const client = dgram.createSocket("udp4");
