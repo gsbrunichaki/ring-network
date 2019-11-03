@@ -9,7 +9,7 @@ const r1 = readline.createInterface({
   output: process.stdout
 });
 
-module.exports = function readConfigFile(filePath) {
+function readConfigFile(filePath) {
   var dataArq;
   fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
     if (!err) {
@@ -20,20 +20,39 @@ module.exports = function readConfigFile(filePath) {
   });
 
   return dataArq;
-};
+}
 
-module.exports = function sendMessage(message, PORT, HOST) {
+function sendMessage() {
+  let message;
+  r1.question("message", answer => {
+    message = answer;
+  });
+
+  let PORT;
+  r1.question("Port", answer => {
+    PORT = answer;
+  });
+
+  let HOST;
+  r1.question("Host", answer => {
+    HOST = answer;
+  });
+
   const client = dgram.createSocket("udp4");
   client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
     if (err) throw err;
     console.log("UDP " + message + " sent to " + HOST + ":" + PORT);
     client.close();
   });
-};
+}
 
-module.exports = function generateToken() {
+function generateToken() {
   return "1234";
-};
+}
+
+function listMessagesQueue() {
+  console.log("messages");
+}
 
 function help() {
   return (
@@ -61,14 +80,15 @@ function menu() {
         menu();
         break;
       case "E":
-        console.log("tesdaygda");
+        sendMessage();
         menu();
         break;
       case "G":
-        console.log("djihusd");
+        generateToken();
+        menu();
         break;
       case "L":
-        console.log("bdsbdhsbydshb");
+        listMessagesQueue();
         menu();
         break;
       case "S":
