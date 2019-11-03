@@ -10,8 +10,8 @@ server.on("error", err => {
 });
 
 //send package
-console.log(rinfo);
 server.on("message", (msg, rinfo) => {
+  console.log(rinfo);
   console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
 });
 
