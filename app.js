@@ -46,7 +46,9 @@ function generateToken() {
 }
 
 function listMessagesQueue() {
-  console.log("messages");
+  for (let i = 0; i < queueMessage.length; i++) {
+    console.log("\n", queueMessage);
+  }
 }
 
 function help() {
@@ -136,6 +138,7 @@ function runServer() {
     };
     if (typePackage[0] == "2345") {
       if (message.apelido_de_destino != configFile.apelido_maquina_atual) {
+        //calcular crc
         sendMessage(msg, configFile.ip_destino_porta);
       } else if (
         message.apelido_de_destino == configFile.apelido_maquina_atual
