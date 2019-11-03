@@ -7,7 +7,7 @@ const statePackage = require("./statePackage");
 let configFile = {};
 const readline = require("readline");
 const PORT = "41234";
-const queueMessage = [{}];
+const queueMessage = [];
 
 var dataConfigFile;
 
