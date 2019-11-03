@@ -3,12 +3,31 @@ const fs = require("fs"),
   path = require("path"),
   filePathConfig = path.join(__dirname, "config_2.txt");
 const crc16 = require('js-crc').crc16;
+const DataPackage = require("./dataPackage");
 const server = dgram.createSocket("udp4");
 const statePackage = require("./statePackage");
 let configFile = {};
 const readline = require("readline");
 const PORT = "41234";
 const queueMessage = [];
+const Config = require('./config');
+
+function readConfigFile(fileName) {
+  const content = fs.readFileSync(fileName, 'utf8');
+  const [ destiny, nickname, tokenTime, hasToken ] = content.trim().split('\n');
+  const [ destinyIP, destinyPort ] = destiny.split(':');
+
+  return {
+    destinyIP,
+    destinyPort,
+    nickname,
+    tokenTime: JSON.parse(tokenTime),
+    hasToken: JSON.parse(hasToken),
+  };
+}
+
+const config = new Config({ ...readConfigFile });
+console.log(config.toString());
 
 var dataConfigFile;
 
@@ -179,4 +198,5 @@ function runServer() {
   server.bind(PORT);
 }
 
-menu();
+// menu();
+console.log(readConfigFile('config_1.txt'));
