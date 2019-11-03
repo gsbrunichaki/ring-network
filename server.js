@@ -5,8 +5,7 @@ const fs = require("fs"),
 const server = dgram.createSocket("udp4");
 
 const queueMessage = [];
-const PORT = "41234";
-const app = require("app");
+const PORT = "5000";
 
 server.on("error", err => {
   console.log(`server error:\n${err.stack}`);
@@ -20,8 +19,9 @@ server.on("message", (msg, rinfo) => {
   if (typePackage[0] == "2345") {
     const dataPackage = typePackage[1].split(":");
     if (dataPackage[2] != "Bob") {
-      const data = app.readConfigFile(filePathConfig);
-      console.log(data);
+      console.log("aqui");
+      const dataFile = require("./app").readConfigFile(filePathConfig);
+      console.log(dataFile);
     }
   }
 });

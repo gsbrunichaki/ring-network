@@ -6,17 +6,19 @@ const r1 = readline.createInterface({
   output: process.stdout
 });
 
-module.exports = function readConfigFile(filePath) {
-  var dataArq;
-  fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
-    if (!err) {
-      dataArq = data;
-    } else {
-      console.log(err);
-    }
-  });
+module.exports = function() {
+  this.readConfigFile = function(filePath) {
+    var dataArq;
+    fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
+      if (!err) {
+        dataArq = data;
+      } else {
+        console.log(err);
+      }
+    });
 
-  return dataArq;
+    return dataArq;
+  };
 };
 
 function sendMessage(message, HOST, PORT) {
