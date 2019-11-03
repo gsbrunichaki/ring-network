@@ -125,16 +125,17 @@ function runServer() {
       isToken: dataConfigFile[3]
     };
 
-    const typePackage = msg.toString().split(";");
-    const dataPackage = typePackage[1].split(":");
-    const message = {
-      controle_de_erro: dataPackage[0],
-      apelido_de_origem: dataPackage[1],
-      apelido_de_destino: dataPackage[2],
-      CRC: dataPackage[3],
-      mensagem: dataPackage[4]
-    };
     if (typePackage[0] == "2345") {
+      const typePackage = msg.toString().split(";");
+      const dataPackage = typePackage[1].split(":");
+      const message = {
+        controle_de_erro: dataPackage[0],
+        apelido_de_origem: dataPackage[1],
+        apelido_de_destino: dataPackage[2],
+        CRC: dataPackage[3],
+        mensagem: dataPackage[4]
+      };
+
       if (message.apelido_de_destino != configFile.apelido_maquina_atual) {
         //calcular crc
         sendMessage(msg, configFile.ip_destino_porta);
@@ -155,6 +156,7 @@ function runServer() {
       }
     } else if (typePackage[0] == "1234") {
       //queue
+      console.log(queueMessage);
       if (queueMessage != undefined) {
         var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:19385749:${queueMessage[0].message}`;
         var hostQueue = `${queueMessage[0].host}:${queueMessage[0].port}`;
