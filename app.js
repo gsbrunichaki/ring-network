@@ -154,7 +154,7 @@ function runServer() {
       }
     } else if (typePackage[0] == "1234") {
       //queue
-      if (queue != undefined) {
+      if (queueMessage != undefined) {
         var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:19385749:${queueMessage[0].message}`;
         var hostQueue = `${queueMessage[0].host}:${queueMessage[0].port}`;
         sendMessage(msgQueue, hostQueue);
