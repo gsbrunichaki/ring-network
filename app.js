@@ -2,6 +2,7 @@ const dgram = require("dgram");
 const fs = require("fs"),
   path = require("path"),
   filePathConfig = path.join(__dirname, "config_2.txt");
+const crc16 = require('js-crc').crc16;
 const server = dgram.createSocket("udp4");
 const statePackage = require("./statePackage");
 let configFile = {};
