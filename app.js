@@ -22,22 +22,8 @@ function readConfigFile(filePath) {
   return dataArq;
 }
 
-function sendMessage() {
-  let message;
-  r1.question("message", answer => {
-    message = answer;
-  });
-
-  let PORT;
-  r1.question("Port", answer => {
-    PORT = answer;
-  });
-
-  let HOST;
-  r1.question("Host", answer => {
-    HOST = answer;
-  });
-
+async function sendMessage(message, HOST, PORT) {
+  console.log(message);
   const client = dgram.createSocket("udp4");
   client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
     if (err) throw err;
@@ -59,7 +45,7 @@ function help() {
     "\nComandos:\n" +
     "A -- Ajuda\n" +
     "D -- Destrói um token\n" +
-    "E [destino] [mensagem] -- Envia [mensagem] para [destino]\n" +
+    "E [message] [host] [port] -- Envia [mensagem] para [destino]\n" +
     "G -- Gera um token\n" +
     "L -- Verifica mensagens na fila para envio\n" +
     "S -- Sair\n"
@@ -68,37 +54,28 @@ function help() {
 
 function menu() {
   r1.question(help(), answer => {
-    console.log("Sua resposta", answer);
-
-    switch (answer) {
-      case "A":
-        console.log(help());
-        menu();
-        break;
-      case "D":
-        console.log("dahdau");
-        menu();
-        break;
-      case "E":
-        sendMessage();
-        menu();
-        break;
-      case "G":
-        generateToken();
-        menu();
-        break;
-      case "L":
-        listMessagesQueue();
-        menu();
-        break;
-      case "S":
-        console.log("bye bye!");
-        r1.close();
-        return answer;
-      default:
-        console.log("Opção inválida! Tente novamente");
-        menu();
-        break;
+    if (answer == "A") {
+      console.log(help());
+      menu();
+    } else if (answer == "D") {
+      console.log("dahdau");
+      menu();
+    } else if (answer.split(" ").length == 4) {
+      const array = answer.split(" ");
+      sendMessage(array[1], array[2], array[3]);
+      menu();
+    } else if (answer == "G") {
+      generateToken();
+      menu();
+    } else if (answer == "L") {
+      listMessagesQueue();
+      menu();
+    } else if (answer == "S") {
+      console.log("bye bye!");
+      r1.close();
+    } else {
+      console.log("Opção inválida! Tente novamente");
+      menu();
     }
   });
 }
