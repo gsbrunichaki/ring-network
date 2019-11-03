@@ -1,7 +1,7 @@
 const dgram = require("dgram");
 const fs = require("fs"),
   path = require("path"),
-  filePathConfig = path.join(__dirname, "config_1.txt");
+  filePathConfig = path.join(__dirname, "config_2.txt");
 const server = dgram.createSocket("udp4");
 const statePackage = require("./statePackage");
 let configFile = {};
@@ -9,22 +9,20 @@ const readline = require("readline");
 const PORT = "41234";
 const queueMessage = [{}];
 
+var dataConfigFile;
+
 const r1 = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-var dataConfigFile = readConfigFile(filePathConfig);
-
-function readConfigFile(filePath) {
-  fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
-    if (!err) {
-      return data;
-    } else {
-      console.log(err);
-    }
-  });
-}
+fs.readFile(filePathConfig, { encoding: "utf-8" }, function(err, data) {
+  if (!err) {
+    dataConfigFile = data.toString().split("\n");
+  } else {
+    console.log(err);
+  }
+});
 
 function sendMessageQueue(message, nickNameDestino, port, HOST) {
   queueMessage.push({
@@ -35,7 +33,7 @@ function sendMessageQueue(message, nickNameDestino, port, HOST) {
   });
 }
 
-function generateToken() {
+async function generateToken() {
   configFile = {
     ip_destino_porta: dataConfigFile[0],
     apelido_maquina_atual: dataConfigFile[1],
