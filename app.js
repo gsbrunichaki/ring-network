@@ -96,6 +96,7 @@ function menu() {
 function sendMessage(message, HOST) {
   const host_port = HOST.split(":");
   const client = dgram.createSocket("udp4");
+  console.log(HOST);
   client.send(message, 0, message.length, host_port[1], host_port[0], function(
     err,
     bytes
@@ -125,8 +126,8 @@ function runServer() {
       isToken: dataConfigFile[3]
     };
 
+    const typePackage = msg.toString().split(";");
     if (typePackage[0] == "2345") {
-      const typePackage = msg.toString().split(";");
       const dataPackage = typePackage[1].split(":");
       const message = {
         controle_de_erro: dataPackage[0],
@@ -157,7 +158,7 @@ function runServer() {
     } else if (typePackage[0] == "1234") {
       //queue
       console.log(queueMessage);
-      if (queueMessage != undefined) {
+      if (queueMessage.length != 0) {
         var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:19385749:${queueMessage[0].message}`;
         var hostQueue = `${queueMessage[0].host}:${queueMessage[0].port}`;
         sendMessage(msgQueue, hostQueue);
