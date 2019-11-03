@@ -3,18 +3,11 @@ const fs = require("fs"),
   path = require("path"),
   filePathConfig = path.join(__dirname, "config_1.txt");
 const server = dgram.createSocket("udp4");
-const app = require("./app");
 const queueMessage = [];
 const PORT = "41234";
+const statePackage = require("./statePackage");
 
-const dataConfigFile = readConfigFile(filePathConfig).toString.split("/n");
-
-const configFile = {
-  ip_destino_porta: dataConfigFile[0],
-  apelido_maquina_atual: dataConfigFile[1],
-  tempo_token: dataConfigFile[2],
-  isToken: dataConfigFile[3]
-};
+var dataConfigFile = readConfigFile(filePathConfig);
 
 function readConfigFile(filePath) {
   fs.readFile(filePath, { encoding: "utf-8" }, function(err, data) {
@@ -49,22 +42,36 @@ server.on("error", err => {
 //receive package
 server.on("message", async (msg, rinfo) => {
   console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-  console.log(configFile);
+
+  const configFile = {
+    ip_destino_porta: dataConfigFile[0],
+    apelido_maquina_atual: dataConfigFile[1],
+    tempo_token: dataConfigFile[2],
+    isToken: dataConfigFile[3]
+  };
+
   const typePackage = msg.toString().split(";");
+  const dataPackage = typePackage[1].split(":");
+  const message = {
+    controle_de_erro: dataPackage[0],
+    apelido_de_origem: dataPackage[1],
+    apelido_de_destino: dataPackage[2],
+    CRC: dataPackage[3],
+    mensagem: dataPackage[4]
+  };
   if (typePackage[0] == "2345") {
-    const dataPackage = typePackage[1].split(":");
-    const message = {
-      controle_de_erro: dataPackage[0],
-      apelido_de_origem: dataPackage[1],
-      apelido_de_destino: dataPackage[2],
-      CRC: dataPackage[3],
-      mensagem: dataPackage[4]
-    };
-    console.log(message);
     if (message.apelido_de_destino != configFile.apelido_maquina_atual) {
       sendMessage(msg, configFile.ip_destino_porta);
     } else if (message.apelido_de_destino == configFile.apelido_maquina_atual) {
     } else if (message.apelido_de_origem == configFile.apelido_maquina_atual) {
+      //VERIFICAR CONTROLE DE ERRO
+      if (
+        message.controle_de_erro == statePackage.naoCopiado ||
+        message.controle_de_erro == statePackage.erro
+      ) {
+        //gerar token
+        sendMessage("1234", configFile.ip_destino_porta);
+      }
     }
   } else if (typePackage[0] == "1234") {
   }
