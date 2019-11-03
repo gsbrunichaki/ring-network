@@ -5,7 +5,7 @@ const fs = require("fs"),
 const server = dgram.createSocket("udp4");
 
 const queueMessage = [];
-const PORT = "5000";
+const PORT = "41234";
 
 server.on("error", err => {
   console.log(`server error:\n${err.stack}`);
@@ -15,7 +15,7 @@ server.on("error", err => {
 //receive package
 server.on("message", (msg, rinfo) => {
   console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-  const typePackage = msg.split(";");
+  const typePackage = msg.toString().split(";");
   if (typePackage[0] == "2345") {
     const dataPackage = typePackage[1].split(":");
     if (dataPackage[2] != "Bob") {
