@@ -181,7 +181,7 @@ function runServer() {
       if (queueMessage.length != 0) {
         var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:19385749:${queueMessage[0].message}`;
         var hostQueue = `${queueMessage[0].host}:${queueMessage[0].port}`;
-        sendMessage(msgQueue, hostQueue);
+        sendMessage(msgQueue, configFile.ip_destino_porta);
       } else {
         sendMessage("1234", configFile.ip_destino_porta);
       }
@@ -198,5 +198,5 @@ function runServer() {
   server.bind(PORT);
 }
 
-// menu();
-console.log(readConfigFile('config_1.txt'));
+menu();
+// console.log(readConfigFile('config_1.txt'));
