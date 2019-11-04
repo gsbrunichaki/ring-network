@@ -2,7 +2,7 @@ const dgram = require("dgram");
 const fs = require("fs"),
   path = require("path"),
   filePathConfig = path.join(__dirname, "config_2.txt");
-const crc16 = require('js-crc').crc16;
+const crc16 = require("js-crc").crc16;
 const DataPackage = require("./dataPackage");
 const server = dgram.createSocket("udp4");
 const statePackage = require("./statePackage");
@@ -10,19 +10,19 @@ let configFile = {};
 const readline = require("readline");
 const PORT = "41234";
 const queueMessage = [];
-const Config = require('./config');
+const Config = require("./config");
 
 function readConfigFile(fileName) {
-  const content = fs.readFileSync(fileName, 'utf8');
-  const [ destiny, nickname, tokenTime, hasToken ] = content.trim().split('\n');
-  const [ destinyIP, destinyPort ] = destiny.split(':');
+  const content = fs.readFileSync(fileName, "utf8");
+  const [destiny, nickname, tokenTime, hasToken] = content.trim().split("\n");
+  const [destinyIP, destinyPort] = destiny.split(":");
 
   return {
     destinyIP,
     destinyPort,
     nickname,
     tokenTime: JSON.parse(tokenTime),
-    hasToken: JSON.parse(hasToken),
+    hasToken: JSON.parse(hasToken)
   };
 }
 
@@ -158,21 +158,38 @@ function runServer() {
       };
 
       if (message.apelido_de_destino != configFile.apelido_maquina_atual) {
-        //calcular crc
         sendMessage(msg, configFile.ip_destino_porta);
       } else if (
         message.apelido_de_destino == configFile.apelido_maquina_atual
       ) {
+        //calcular crc
+        let isValidCRC = crc16(message.mensagem) == message.CRC;
+        let returnMessage;
+        if (isValidCRC) {
+          console.log(
+            "Apelido da Origem:",
+            message.apelido_de_origem,
+            " Mensagem:",
+            message.mensagem
+          );
+          returnMessage = `2345;ACK:${message.apelido_de_origem}:${message.apelido_de_origem}:${message.CRC}:${message.mensagem}`;
+        } else {
+          returnMessage = `2345;erro:${message.apelido_de_origem}:${message.apelido_de_origem}:${message.CRC}:${message.mensagem}`;
+        }
+        sendMessage(returnMessage, configFile.ip_destino_porta);
       } else if (
         message.apelido_de_origem == configFile.apelido_maquina_atual
       ) {
         //VERIFICAR CONTROLE DE ERRO
         if (
           message.controle_de_erro == statePackage.naoCopiado ||
-          message.controle_de_erro == statePackage.erro
+          message.controle_de_erro == statePackage.ACK
         ) {
-          //gerar token
           sendMessage("1234", configFile.ip_destino_porta);
+        } else {
+          let crcMessage = crc16(queueMessage[0].message);
+          var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:${crcMessage}:${queueMessage[0].message}`;
+          sendMessage(msgQueue, configFile.ip_destino_porta);
         }
       }
     } else if (typePackage[0] == "1234") {
