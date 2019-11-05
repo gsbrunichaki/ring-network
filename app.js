@@ -12,6 +12,7 @@ const PORT = "41234";
 const queueMessage = [];
 const Config = require("./config");
 
+//lê arquivo de configuração
 function readConfigFile(fileName) {
   const content = fs.readFileSync(fileName, "utf8");
   const [destiny, nickname, tokenTime, hasToken] = content.trim().split("\n");
@@ -31,6 +32,7 @@ console.log(config.toString());
 
 var dataConfigFile;
 
+//cria scanner de console
 const r1 = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -44,6 +46,7 @@ fs.readFile(filePathConfig, { encoding: "utf-8" }, function(err, data) {
   }
 });
 
+//envia mensagem para fila
 function sendMessageQueue(message, nickNameDestino, port, HOST) {
   queueMessage.push({
     nickNameDestino,
@@ -53,6 +56,7 @@ function sendMessageQueue(message, nickNameDestino, port, HOST) {
   });
 }
 
+//gera token
 async function generateToken() {
   configFile = {
     ip_destino_porta: dataConfigFile[0],
@@ -63,12 +67,14 @@ async function generateToken() {
   sendMessage("1234", configFile.ip_destino_porta);
 }
 
+//lista mensagens na fila
 function listMessagesQueue() {
   for (let i = 0; i < queueMessage.length; i++) {
     console.log("\n", queueMessage);
   }
 }
 
+//função de ajuda
 function help() {
   return (
     "\nComandos:\n" +
@@ -82,6 +88,7 @@ function help() {
   );
 }
 
+//menu da aplicação
 function menu() {
   r1.question(help(), answer => {
     if (answer == "A") {
@@ -113,6 +120,7 @@ function menu() {
   });
 }
 
+//função de envio de mensagem
 function sendMessage(message, HOST) {
   const host_port = HOST.split(":");
   const client = dgram.createSocket("udp4");
@@ -129,6 +137,7 @@ function sendMessage(message, HOST) {
   });
 }
 
+//executa servvidor
 function runServer() {
   server.on("error", err => {
     console.log(`server error:\n${err.stack}`);
@@ -147,6 +156,7 @@ function runServer() {
     };
 
     const typePackage = msg.toString().split(";");
+    //verifica se o tipo de pacote é de dados
     if (typePackage[0] == "2345") {
       const dataPackage = typePackage[1].split(":");
       const message = {
@@ -190,14 +200,15 @@ function runServer() {
           let crcMessage = crc16(queueMessage[0].message);
           var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:${crcMessage}:${queueMessage[0].message}`;
           sendMessage(msgQueue, configFile.ip_destino_porta);
+          //TODO ver se passou mais de uma vez
         }
       }
     } else if (typePackage[0] == "1234") {
       //queue
+      //Verificar o tempo
       console.log(queueMessage);
       if (queueMessage.length != 0) {
         var msgQueue = `2345;naocopiado:${configFile.apelido_maquina_atual}:${queueMessage[0].nickNameDestino}:19385749:${queueMessage[0].message}`;
-        var hostQueue = `${queueMessage[0].host}:${queueMessage[0].port}`;
         sendMessage(msgQueue, configFile.ip_destino_porta);
       } else {
         sendMessage("1234", configFile.ip_destino_porta);
@@ -216,4 +227,3 @@ function runServer() {
 }
 
 menu();
-// console.log(readConfigFile('config_1.txt'));
